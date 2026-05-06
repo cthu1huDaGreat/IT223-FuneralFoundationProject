@@ -11,53 +11,35 @@ use Illuminate\Support\Facades\Session;
 
 class AnnouncementController extends Controller
 {
-    public function store(Request $request)
-{
-    // Validate the request
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'message' => 'required|string',
-    ]);
-
-    try {
-        DB::beginTransaction();
-        $formattedDate = now()->format('m/d/Y g:iA');
-        $announcement = Announcement::create([
-            'title' => $request->title,
-            'content' => $request->message,
-            'date' => $formattedDate,
+   public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'message' => 'required|string',
         ]);
 
-        $users = User::all();
+        try {
+            $formattedDate = now()->format('m/d/Y g:iA');
 
-        if ($users->isEmpty()) {
-            throw new \Exception('No users found in the database.');
-        }
-
-        foreach ($users as $user) {
-            AnnouncementDisp::create([
-                'announcement_id' => $announcement->announcement_id,
-                'user_id' => $user->user_id,
-                'status' => 1,
+            DB::statement('CALL add_announcement(?, ?, ?)', [
+                $request->title,
+                $request->message,
+                $formattedDate
             ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Announcement posted successfully!'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
         }
-
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Announcement posted successfully to ' . $users->count() . ' users!'
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Error posting announcement: ' . $e->getMessage()
-        ], 500);
     }
-}
+    
     public function dismiss(Request $request)
     {
         $request->validate([
