@@ -41,64 +41,35 @@ class AnnouncementController extends Controller
     }
     
     public function dismiss(Request $request)
-    {
-        $request->validate([
-            'announcement_id' => 'required|exists:announcements,announcement_id'
-        ]);
-
-        try {
+        {
+            $request->validate([
+                'announcement_id' => 'required'
+            ]);
 
             $userId = Session::get('user_id');
-            
-            if (!$userId) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User not authenticated. Please login again.'
-                ], 401);
-            }
 
-            $updated = AnnouncementDisp::where('announcement_id', $request->announcement_id)
-                ->where('user_id', $userId)
-                ->update(['status' => 0]);
+            DB::statement('CALL dismiss_announcement(?, ?)', [
+                $request->announcement_id,
+                $userId
+            ]);
 
-            if ($updated) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Announcement dismissed successfully.'
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Announcement not found or already dismissed.'
-                ], 404);
-            }
-
-        } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Error dismissing announcement: ' . $e->getMessage()
-            ], 500);
+                'success' => true,
+                'message' => 'Dismissed successfully'
+            ]);
         }
-    }
 
     public function getAnnouncements()
-    {
-        $userId = Session::get('user_id');
-        
-        if (!$userId) {
-            return collect(); 
+        {
+            $userId = Session::get('user_id');
+
+            if (!$userId) {
+                return collect();
+            }
+
+            return DB::select('CALL get_user_announcements(?)', [$userId]);
         }
-
-        $announcements = AnnouncementDisp::with('announcement')
-            ->where('user_id', $userId)
-            ->where('status', 1) 
-            ->join('announcements', 'announcement_disp.announcement_id', '=', 'announcements.announcement_id')
-            ->select('announcements.*', 'announcement_disp.announcement_id')
-            ->orderBy('announcements.date', 'desc')
-            ->get();
-
-        return $announcements;
-    }
+        
     public function delete(Request $request)
     {
         // Validate the request
