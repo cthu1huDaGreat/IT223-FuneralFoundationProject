@@ -24,7 +24,7 @@
     <a href="{{route('page.member-contribution')}}">Transactions</a>
     <a href="{{route('page.member-funeral')}}">Funeral Information</a>
     <a href="{{route('page.member-settings')}}">Settings</a>
-    <a href="{{route('logout')}}" id="logoutBtn">Logoutfrrr</a>
+    <a href="{{route('logout')}}" id="logoutBtn">Logout</a>
   </nav>
 </aside>
 
