@@ -14,45 +14,35 @@ class LoginController extends Controller
         return view('page.index');
     }
 
-    public function login(Request $request)
-    {
-        // Validate input
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required'
-        ]);
+public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required'
+    ]);
+    $results = DB::select("CALL GetUserByEmail(?)", [$credentials['email']]);
+    $user = !empty($results) ? $results[0] : null;
+    if ($user && Hash::check($credentials['password'], $user->password)) {
 
-        // Get user by email
-        $user = DB::table('users')
-            ->where('email', $credentials['email'])
-            ->first();
+        Session::put('user_id', $user->user_id);
+        Session::put('role_id', $user->role_id);
+        Session::put('email', $user->email);
 
-        // Check if user exists and password matches hashed password
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-
-            // Store values in session
-            Session::put('user_id', $user->user_id);
-            Session::put('role_id', $user->role_id);
-            Session::put('email', $user->email);
-
-            // Redirect based on role
-            switch ($user->role_id) {
-                 case 0:
-                    return redirect()->route('login')->with('error', 'Your account is not yet Approved. Please contact admin.');
-                case 1:
-                    return redirect()->route('page.dashboard-member');
-                case 2:
-                    return redirect()->route('page.dashboard-treasurer');
-                case 3:
-                    return redirect()->route('page.dashboard-president');
-                default:
-                    return redirect()->route('login')->with('error', 'Role not recognized');
-            }
+        switch ($user->role_id) {
+            case 0:
+                return redirect()->route('login')->with('error', 'Account not approved.');
+            case 1:
+                return redirect()->route('page.dashboard-member');
+            case 2:
+                return redirect()->route('page.dashboard-treasurer');
+            case 3:
+                return redirect()->route('page.dashboard-president');
+            default:
+                return redirect()->route('login')->with('error', 'Role not recognized');
         }
-
-        // If login fails
-        return back()->with('error', 'Invalid login credentials');
     }
+    return back()->with('error', 'Invalid login credentials');
+}
 
     public function logout()
     {
