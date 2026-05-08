@@ -61,6 +61,8 @@
         </div>
       </div>
     </div>
+    
+    <button class="btn btn-accent" data-bs-toggle="modal" data-bs-target="#">New Payment</button><br><br>
 
     <!-- Contribution Table -->
     <div class="card mb-4">

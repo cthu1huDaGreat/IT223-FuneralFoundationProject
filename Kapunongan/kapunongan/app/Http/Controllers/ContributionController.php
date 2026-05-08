@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use App\Models\GetBalance;
 
 class ContributionController extends Controller
 {
@@ -39,7 +40,9 @@ class ContributionController extends Controller
         $totalContributions = DB::table('funeral_fund')->sum('balance');
         $totalMembers       = DB::table('users')->count();
         $totalFuneral       = 0;
+        $wallet = GetBalance::first();
+        $balance = $wallet ? $wallet->balance : 0.00;
 
-        return view('page.dashboard-president', compact('totalMembers','totalContributions','totalFuneral'));
+        return view('page.dashboard-president', compact('totalMembers','totalContributions','totalFuneral','balance'));
     }
 }

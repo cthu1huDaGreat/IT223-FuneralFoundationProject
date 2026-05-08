@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\FamilyController;
+use App\Http\Controllers\DashboardController;
 
 
 
@@ -27,8 +28,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 Route::post('/register-user', [RegisterController::class, 'store'])->name('register.user'); 
 Route::get('/dashboard', [ContributionController::class, 'dashboard'])->name('page.dashboard-member');
-Route::get('/dashboard-president', [ContributionController::class, 'dashboardPresident'])->name('page.dashboard-president');
-Route::post('/settings/change-password', [SettingsController::class, 'changePassword'])->name('settings.changePassword');
 Route::post('/announcements/store', [App\Http\Controllers\AnnouncementController::class, 'store'])->name('announcements.store');
 Route::get('/announcements/get', [App\Http\Controllers\AnnouncementController::class, 'getAnnouncements'])->name('announcements.get');
 Route::post('/announcements/store', [AnnouncementController::class, 'store'])->name('announcements.store');
@@ -88,7 +87,7 @@ Route::prefix('family')->group(function () {
     Route::post('/update', [FamilyController::class, 'update'])->name('family.update');
     Route::post('/delete', [FamilyController::class, 'delete'])->name('family.delete');
 });
-
+Route::get('page/dashboard-member', [DashboardController::class, 'index']);
 // Dashboards
 Route::get('/page/dashboard-member', function () {
     return view('page.dashboard-member');
@@ -97,10 +96,6 @@ Route::get('/page/dashboard-member', function () {
 Route::get('/page/dashboard-treasurer', function () {
     return view('page.dashboard-treasurer');
 })->name('page.dashboard-treasurer');
-
-Route::get('/page/dashboard-president', function () {
-    return view('page.dashboard-president');
-})->name('page.dashboard-president');
 
 Route::get('/page/member-contribution', function () {
     return view('page.member-contribution');
@@ -150,5 +145,6 @@ Route::get('/page/index', function () {
     return view('page.index');
 })->name('page.index');
 
-
-
+Route::post('/settings/change-password', [SettingsController::class, 'changePassword'])->name('settings.changePassword');
+Route::get('/page/dashboard-president', [DashboardController::class, 'index'])->name('page.dashboard-president');
+Route::get('/dashboard-president', [DashboardController::class, 'index']);
