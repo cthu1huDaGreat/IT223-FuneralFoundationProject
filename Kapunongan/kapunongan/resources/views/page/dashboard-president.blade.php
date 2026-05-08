@@ -46,7 +46,7 @@
       <div class="col-md-4">
         <div class="card shadow-sm p-3">
             <h6 style="color: #00E5FF;">Total Balance</h6>
-            <h3 id="totalBalance">₱{{ number_format($totalBalance ?? 0, 2) }}</h3>
+            <h3 id="totalBalance">₱{{ number_format($balance ?? 0, 2) }}</h3>
         </div>
     </div>
     <div class="col-md-4">
@@ -135,7 +135,7 @@
       <h5 class="mb-0">All Members Overview</h5>
       <div class="text-end">
         <small class="text">Total Members</small>
-        <h3 class="mb-0" id="totalMembers">{{ $totalMembers}}</h3>  
+        <h3 class="mb-0" id="totalMembers">0</h3>  
       </div>
     </div>
     <div class="mb-3">
