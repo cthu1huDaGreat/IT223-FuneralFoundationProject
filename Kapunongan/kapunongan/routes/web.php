@@ -34,13 +34,11 @@ Route::post('/announcements/store', [AnnouncementController::class, 'store'])->n
 Route::post('/announcements/dismiss', [AnnouncementController::class, 'dismiss'])->name('announcements.dismiss');   
 Route::post('/users/approve', [UserController::class, 'approveUser'])->name('users.approve');
 Route::get('/members/count', [MemberController::class, 'getMembersCount'])->name('members.count');
-Route::post('/register', [RegisterController::class, 'store'])->name('register');
 Route::post('/members/update', [MemberController::class, 'updateMember'])->name('members.update');
 
 Route::get('/members/get', [MemberController::class, 'getMembers'])->name('members.get');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
 
 Route::get('/announcements/get', [App\Http\Controllers\AnnouncementController::class, 'getAll'])->name('announcements.get');
 Route::post('/announcements/update', [App\Http\Controllers\AnnouncementController::class, 'update'])->name('announcements.update');
