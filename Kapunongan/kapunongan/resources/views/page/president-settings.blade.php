@@ -101,11 +101,11 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Prk./Block No.</label>
-                        <input type="text" id="address" name="address" class="form-control" placeholder="Enter Prk/Block No." required>
+                        <input type="text" id="address" name="address" class="form-control" placeholder="Enter Prk/Block No." >
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Occupation</label>
-                        <input type="text" id="occupation" name="occupation" class="form-control" placeholder="Enter Occupation" required>
+                        <input type="text" id="occupation" name="occupation" class="form-control" placeholder="Enter Occupation">
                     </div>
                 </div>
                 <button type="submit" class="btn-save btn-primary">Save Changes</button>
@@ -234,7 +234,6 @@
             </div>
             <form id="editFamilyMemberForm">
                 @csrf
-                @method('PUT')
                 <input type="hidden" id="editFamilyId" name="family_id">
                 <div class="modal-body">
                     <div class="row g-3">
@@ -639,6 +638,63 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error deleting family member:', error);
             showAlert('Error: ' + error.message, 'danger');
+        });
+    }
+
+    function updateFamilyMember() {
+        const form = document.getElementById('editFamilyMemberForm');
+        const submitButton = form.querySelector('button[type="submit"]');
+        const formData = new FormData(form);
+
+        // Basic client-side validation
+        const requiredFields = ['family_id', 'fname', 'lname', 'age', 'sex', 'bdate', 'relation'];
+        let isValid = true;
+        requiredFields.forEach(name => {
+            const field = form.querySelector(`[name="${name}"]`);
+            if (field && !String(field.value).trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else if (field) {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            showAlert('Please fill in all required fields', 'danger');
+            return;
+        }
+
+        // Send request
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Updating...';
+
+        fetch('{{ route("family.update") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editFamilyModal'));
+                if (modal) modal.hide();
+                form.reset();
+                loadFamilyMembers();
+                showAlert(data.message || 'Family member updated successfully!', 'success');
+            } else {
+                showAlert(data.message || 'Failed to update family member', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating family member:', error);
+            showAlert('Error: ' + error.message, 'danger');
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Update Family Member';
         });
     }
 

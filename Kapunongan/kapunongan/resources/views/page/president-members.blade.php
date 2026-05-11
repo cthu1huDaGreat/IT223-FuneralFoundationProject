@@ -329,7 +329,7 @@ function submitForm() {
         return;
     }
 
-    fetch('{{ route("register") }}', {
+    fetch('{{ route("register.store") }}', {
         method: 'POST',
         body: formData,
         headers: {
@@ -453,7 +453,7 @@ function loadMembers() {
     })
     .catch(error => {
         console.error('Error loading members:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Error loading members. Please check console.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error loading members. Please check console.</td></tr>';
     });
 }
 
@@ -490,8 +490,7 @@ function displayMembers(members) {
 
     let html = '';
     members.forEach((member, index) => {
-        console.log('Processing member:', member);
-        const roleType = member.role ? member.role.role : (member.role_id || 'Unknown');
+        const roleType = member.role_name || member.role_id || 'Unknown';
         
         html += `
             <tr>
@@ -499,7 +498,7 @@ function displayMembers(members) {
                 <td>${member.fname || 'N/A'}</td>
                 <td>${member.lname || 'N/A'}</td>
                 <td>${member.email || 'N/A'}</td>
-                <td>${roleType}</td>
+                <td><span class="badge bg-info text-dark">${roleType}</span></td>
                 <td>
                     <button class="btn btn-primary btn-sm" onclick="showEditModal(${member.user_id})">Edit</button>
                     <button class="btn btn-danger btn-sm" onclick="showDeleteModal(${member.user_id})">Delete</button>
