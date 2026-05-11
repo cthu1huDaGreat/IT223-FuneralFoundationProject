@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +32,7 @@ public function store(Request $request)
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'User registered successfully via Procedure!'
+                'message' => 'User registered successfully!'
             ]);
         }
         return redirect()->back()->with('success', 'User registered successfully!');
@@ -47,4 +46,8 @@ public function store(Request $request)
         return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
     }
 }
+    public function showRegistrationForm()
+    {
+        return view('page.index');
+    }
 }
